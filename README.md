@@ -1,7 +1,6 @@
 ## Demo
 
-![Sudoku Solver UI](assets/demo.png)
-# Sudoku Solver
+![Sudoku Solver UI](assets/models/demo.png)
 
 A C++ Sudoku solver that supports:
 
