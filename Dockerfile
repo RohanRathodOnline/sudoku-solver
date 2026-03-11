@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     cmake \
     ninja-build \
     libopencv-dev \
-    tzdata
+    tzdata \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -17,5 +18,7 @@ COPY . .
 RUN mkdir build && cd build && \
     cmake -G Ninja .. && \
     ninja
+
+EXPOSE 8080
 
 CMD ["./build/sudoku_server"]
