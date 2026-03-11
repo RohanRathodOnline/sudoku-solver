@@ -1,3 +1,6 @@
+## Demo
+
+![Sudoku Solver UI](assets/demo.png)
 # Sudoku Solver
 
 A C++ Sudoku solver that supports:
