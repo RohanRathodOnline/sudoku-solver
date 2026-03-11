@@ -1,0 +1,514 @@
+/* Basic reset so spacing behaves predictably */
+* {
+    box-sizing: border-box;
+}
+
+/* Page background and base layout */
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 16px 0 24px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #1f2937;
+    background:
+        radial-gradient(circle at 15% 10%, rgba(147, 197, 253, 0.2) 0%, rgba(147, 197, 253, 0) 36%),
+        radial-gradient(circle at 85% 90%, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0) 42%),
+        linear-gradient(180deg, #f7faff 0%, #eef3fb 100%);
+}
+
+/* Full-width wrapper for dashboard-style spacing */
+.page-wrapper {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 clamp(40px, 4vw, 56px);
+}
+
+/* Main application surface */
+.app-container {
+    width: 100%;
+    display: grid;
+    gap: 22px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 12px;
+    padding: 28px 32px;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.07);
+}
+
+/* Top title */
+h1 {
+    margin: 0;
+    text-align: center;
+    font-size: clamp(1.5rem, 2.7vw, 2rem);
+    font-weight: 700;
+}
+
+/* Soft notification banner */
+.info-banner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #f0f7ff;
+    border: 1px solid #dbeafe;
+}
+
+.info-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #dbeafe;
+    display: grid;
+    place-items: center;
+    font-size: 0.95rem;
+}
+
+.info-banner p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #1e3a8a;
+}
+
+/* Two-column workspace area */
+.layout-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 32px;
+    align-items: start;
+}
+
+/* Keep Sudoku board centered */
+.board-section {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+}
+
+/* 9x9 board: perfect square using CSS Grid */
+.sudoku-grid {
+    width: min(90vw, 470px);
+    aspect-ratio: 1 / 1;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    border: 3px solid #1f2937;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f8fbff;
+}
+
+/* Single cell style */
+.cell {
+    border: 1px solid #d5dfeb;
+    background: rgba(255, 255, 255, 0.8);
+    display: grid;
+    place-items: center;
+    font-size: clamp(0.95rem, 1.7vw, 1.45rem);
+    font-weight: 600;
+    color: #0f172a;
+    user-select: none;
+}
+
+.cell.is-selected {
+    outline: 2px solid #3b82f6;
+    outline-offset: -2px;
+    background: #eaf2ff;
+}
+
+/* Thick vertical separators for 3x3 blocks */
+.cell:nth-child(9n + 3),
+.cell:nth-child(9n + 6) {
+    border-right: 3px solid #1f2937;
+}
+
+/* Thick horizontal separators for 3x3 blocks */
+.cell:nth-child(n + 19):nth-child(-n + 27),
+.cell:nth-child(n + 46):nth-child(-n + 54) {
+    border-bottom: 3px solid #1f2937;
+}
+
+/* Upload box styling */
+.upload-dropzone {
+    width: 100%;
+    min-height: 130px;
+    border: 2px dashed #b8c8dd;
+    border-radius: 14px;
+    background: #f7fbff;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 16px;
+    gap: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upload-placeholder {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+}
+
+.upload-preview-image {
+    display: none;
+    max-width: 100%;
+    max-height: 170px;
+    border-radius: 10px;
+    object-fit: contain;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+}
+
+.change-image-btn {
+    display: none;
+    margin-top: 8px;
+    border: 1px solid #c7d2e5;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1e3a8a;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.change-image-btn:hover {
+    background: #eff6ff;
+}
+
+.process-image-btn {
+    display: none;
+    margin-top: 8px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 7px 12px;
+    cursor: pointer;
+}
+
+.process-image-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.ocr-status {
+    display: none;
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: #1e3a8a;
+}
+
+.upload-dropzone.has-image .upload-placeholder {
+    display: none;
+}
+
+.upload-dropzone.has-image .upload-preview-image,
+.upload-dropzone.has-image .change-image-btn,
+.upload-dropzone.has-image .process-image-btn {
+    display: block;
+}
+
+.upload-dropzone.is-processing .ocr-status {
+    display: block;
+}
+
+.upload-dropzone:hover {
+    background: #eff6ff;
+    border-color: #60a5fa;
+    box-shadow: 0 6px 14px rgba(59, 130, 246, 0.12);
+}
+
+.upload-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.upload-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+.upload-subtext {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* Keep the file input accessible but visually hidden */
+.upload-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Right-side control panel */
+.control-panel {
+    display: grid;
+    gap: 22px;
+    align-content: start;
+}
+
+/* Keep upload beneath solve button with balanced spacing */
+.control-panel .upload-dropzone {
+    margin-top: 34px;
+}
+
+/* Slightly larger board on large screens */
+@media (min-width: 1400px) {
+    .layout-grid {
+        gap: 40px;
+    }
+
+    .sudoku-grid {
+        width: min(100%, 580px);
+    }
+}
+
+/* Row of circular action controls */
+.top-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.action-item {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+}
+
+.circle-btn {
+    width: 62px;
+    height: 62px;
+    border: 1px solid #dde5f0;
+    border-radius: 50%;
+    background: #f7f9fd;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.circle-btn:hover {
+    transform: translateY(-2px);
+    background: #eef4ff;
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
+}
+
+.circle-btn .icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.action-label {
+    font-size: 0.8rem;
+    color: #475569;
+    font-weight: 600;
+}
+
+/* 3x3 number pad */
+.number-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.num-btn {
+    height: 54px;
+    border: 1px solid #d4deea;
+    border-radius: 10px;
+    background: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1f2937;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.num-btn:hover {
+    transform: translateY(-1px);
+    background: #f8fbff;
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
+}
+
+/* Bottom full-width solve button */
+.solve-btn {
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.solve-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+    box-shadow: 0 12px 20px rgba(37, 99, 235, 0.38);
+}
+
+.solve-celebration {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 1200;
+    padding: 12px 18px;
+    border-radius: 999px;
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    background: linear-gradient(135deg, #16a34a 0%, #22c55e 55%, #4ade80 100%);
+    box-shadow: 0 10px 24px rgba(22, 163, 74, 0.35);
+    animation: celebration-pop 0.35s ease-out;
+}
+
+.solve-celebration::before,
+.solve-celebration::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    height: 18px;
+    background: #15803d;
+    transform: translateY(-50%);
+}
+
+.solve-celebration::before {
+    left: -8px;
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+}
+
+.solve-celebration::after {
+    right: -8px;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.solve-celebration.hide {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+@keyframes celebration-pop {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.92);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Informational section below the app */
+.info-content-wrap {
+    width: 100%;
+    padding: 26px clamp(24px, 4vw, 44px) 10px;
+}
+
+.info-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    gap: 14px;
+}
+
+.content-block {
+    padding: 20px 22px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.76);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.content-block:nth-child(even) {
+    background: rgba(240, 247, 255, 0.72);
+}
+
+.content-block h2 {
+    margin: 0 0 10px;
+    font-size: clamp(1.05rem, 2.1vw, 1.3rem);
+    color: #0f172a;
+}
+
+.content-block p {
+    margin: 0;
+    color: #334155;
+    line-height: 1.6;
+}
+
+.content-block ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #334155;
+    line-height: 1.75;
+}
+
+.content-block li {
+    margin-bottom: 4px;
+}
+
+.content-block li:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive tweaks for smaller screens */
+@media (max-width: 640px) {
+    body {
+        padding: 14px;
+    }
+
+    .app-container {
+        padding: 16px;
+        gap: 16px;
+        border-radius: 14px;
+    }
+
+    .info-banner p {
+        font-size: 0.9rem;
+    }
+
+    /* Stack panel below grid on smaller screens */
+    .layout-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .control-panel {
+        width: min(100%, 470px);
+        justify-self: center;
+    }
+
+    .upload-dropzone {
+        min-height: 120px;
+        padding: 14px;
+    }
+
+    .upload-preview-image {
+        max-height: 150px;
+    }
+
+    .info-content-wrap {
+        padding: 18px 14px 4px;
+    }
+
+    .content-block {
+        padding: 16px;
+    }
+}

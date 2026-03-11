@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Sudoku Grid</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 24px; }
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 46px);
+            grid-template-rows: repeat(9, 46px);
+            width: fit-content;
+            border: 3px solid #1f2937;
+        }
+        .cell {
+            width: 46px;
+            height: 46px;
+            text-align: center;
+            font-size: 20px;
+            border: 1px solid #cbd5e1;
+            outline: none;
+        }
+        .cell:nth-child(9n + 3), .cell:nth-child(9n + 6) { border-right: 3px solid #1f2937; }
+        .cell:nth-child(n + 19):nth-child(-n + 27),
+        .cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom: 3px solid #1f2937; }
+        .given { background: #eef2ff; font-weight: 700; }
+        .actions { margin-top: 16px; }
+        button { padding: 10px 14px; font-size: 14px; cursor: pointer; }
+        .status { margin-top: 10px; color: #1e3a8a; }
+    </style>
+</head>
+<body>
+    <h2>Simple Sudoku Grid</h2>
+    <div id="grid" class="sudoku-grid"></div>
+
+    <div class="actions">
+        <button id="solveBtn" type="button">Solve Sudoku</button>
+    </div>
+    <div id="status" class="status"></div>
+
+    <script>
+        (() => {
+            const API_BASE_URL = "http://localhost:8080";
+            const grid = document.getElementById("grid");
+            const solveBtn = document.getElementById("solveBtn");
+            const status = document.getElementById("status");
+
+            // Pre-fill detected digits here (0 means empty)
+            const detected = [
+                [7,2,3,0,0,0,0,4,0],
+                [0,0,9,1,0,0,0,0,0],
+                [1,0,0,9,4,0,0,0,0],
+                [0,6,0,0,0,4,7,0,0],
+                [6,1,0,0,6,0,0,9,4],
+                [0,0,7,6,0,0,0,0,0],
+                [0,0,0,0,7,9,0,0,0],
+                [0,0,0,0,0,1,9,0,0],
+                [0,0,0,0,0,0,6,7,1]
+            ];
+
+            const cells = [];
+
+            const makeCell = (value) => {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.maxLength = 1;
+                input.className = "cell";
+                input.value = value === 0 ? "" : String(value);
+
+                if (value !== 0) {
+                    input.classList.add("given");
+                }
+
+                input.addEventListener("input", () => {
+                    const v = input.value.replace(/[^1-9]/g, "");
+                    input.value = v;
+                });
+
+                return input;
+            };
+
+            const renderGrid = (matrix) => {
+                grid.innerHTML = "";
+                cells.length = 0;
+                for (let r = 0; r < 9; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        const cell = makeCell(Number(matrix[r][c]) || 0);
+                        cells.push(cell);
+                        grid.appendChild(cell);
+                    }
+                }
+            };
+
+            const readBoard = () => {
+                const board = Array.from({ length: 9 }, () => Array(9).fill(0));
+                for (let i = 0; i < 81; i++) {
+                    board[Math.floor(i / 9)][i % 9] = Number(cells[i].value || 0);
+                }
+                return board;
+            };
+
+            const writeBoard = (matrix) => {
+                for (let i = 0; i < 81; i++) {
+                    const r = Math.floor(i / 9);
+                    const c = i % 9;
+                    const v = Number(matrix[r][c]) || 0;
+                    cells[i].value = v === 0 ? "" : String(v);
+                }
+            };
+
+            solveBtn.addEventListener("click", async () => {
+                const board = readBoard();
+                status.textContent = "Solving...";
+                try {
+                    const response = await fetch(`${API_BASE_URL}/solve-manual`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ board })
+                    });
+
+                    const payload = await response.json().catch(() => ({}));
+                    if (!response.ok) {
+                        const msg = payload?.error?.message || payload?.message || `Solve failed (${response.status}).`;
+                        status.textContent = msg;
+                        return;
+                    }
+
+                    if (payload?.solved) {
+                        writeBoard(payload.solved);
+                        status.textContent = "Sudoku solved successfully.";
+                    } else {
+                        status.textContent = "Solver returned no solution.";
+                    }
+                } catch {
+                    status.textContent = "Cannot connect to backend.";
+                }
+            });
+
+            renderGrid(detected);
+        })();
+    </script>
+</body>
+</html>

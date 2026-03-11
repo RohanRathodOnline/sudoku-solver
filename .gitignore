@@ -1,0 +1,20 @@
+# Visual Studio
+.vs/
+
+# Build folders
+build/
+out/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake-build*/
+
+# Compiled binaries
+*.exe
+*.obj
+*.pdb
+*.dll
+
+# Logs
+*.log

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Image Solver</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Full-width dashboard wrapper -->
+    <div class="page-wrapper">
+        <!-- Main application surface -->
+        <main class="app-container">
+            <!-- Title section -->
+            <h1>Sudoku Image Solver</h1>
+
+        <!-- Soft info banner to guide the user -->
+        <section class="info-banner" aria-label="Sudoku input notice">
+            <span class="info-icon" aria-hidden="true">ℹ️</span>
+            <p>The input should comply with sudoku <a href="#sudoku-rules-section">rules</a></p>
+        </section>
+
+        <!-- Two-column layout: board on the left, controls on the right -->
+        <section class="layout-grid" aria-label="Sudoku workspace layout">
+            <!-- Left side: keep the Sudoku grid -->
+            <section class="board-section" aria-label="Sudoku grid">
+                <div class="sudoku-grid" role="img" aria-label="Empty 9 by 9 Sudoku grid">
+                    <!-- Row 1 -->
+                    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                    <!-- Row 2 -->
+                    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                    <!-- Row 3 -->
+                    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                    <!-- Row 4 -->
+                    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                    <!-- Row 5 -->
+                    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                    <!-- Row 6 -->
+                    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                    <!-- Row 7 -->
+                    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                    <!-- Row 8 -->
+                    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                    <!-- Row 9 -->
+                    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                </div>
+            </section>
+
+            <!-- Right side: control panel -->
+            <aside class="control-panel" aria-label="Sudoku controls">
+                <!-- Top row with circular quick action buttons -->
+                <div class="top-actions" aria-label="Quick actions">
+                    <div class="action-item">
+                        <button type="button" class="circle-btn" aria-label="Undo">
+                            <span class="icon" aria-hidden="true">↶</span>
+                        </button>
+                        <span class="action-label">Undo</span>
+                    </div>
+
+                    <div class="action-item">
+                        <button type="button" class="circle-btn" aria-label="Erase">
+                            <span class="icon" aria-hidden="true">⌫</span>
+                        </button>
+                        <span class="action-label">Erase</span>
+                    </div>
+
+                    <div class="action-item">
+                        <button type="button" class="circle-btn" aria-label="Clear All">
+                            <span class="icon" aria-hidden="true">🗑️</span>
+                        </button>
+                        <span class="action-label">Clear All</span>
+                    </div>
+                </div>
+
+                <!-- Middle section: number pad 1 to 9 -->
+                <div class="number-pad" aria-label="Number pad">
+                    <button type="button" class="num-btn">1</button>
+                    <button type="button" class="num-btn">2</button>
+                    <button type="button" class="num-btn">3</button>
+                    <button type="button" class="num-btn">4</button>
+                    <button type="button" class="num-btn">5</button>
+                    <button type="button" class="num-btn">6</button>
+                    <button type="button" class="num-btn">7</button>
+                    <button type="button" class="num-btn">8</button>
+                    <button type="button" class="num-btn">9</button>
+                </div>
+
+                <!-- Bottom full-width action button -->
+                <button type="button" class="solve-btn">Solve Sudoku</button>
+
+                <!-- Upload box inside control panel, below solve button -->
+                <label class="upload-dropzone" for="sudoku-image-input" aria-label="Upload or scan Sudoku image">
+                    <!-- Default upload message (hidden after image selection) -->
+                    <span class="upload-placeholder">
+                        <span class="upload-icon" aria-hidden="true">📷</span>
+                        <span class="upload-title">Upload or Scan Sudoku Image</span>
+                        <span class="upload-subtext">Drag &amp; drop or click to browse</span>
+                    </span>
+
+                    <!-- Image preview (shown after selecting an image) -->
+                    <img class="upload-preview-image" alt="Selected Sudoku image preview">
+
+                    <!-- Small action to pick another file -->
+                    <button type="button" class="change-image-btn">Change Image</button>
+
+                    <!-- OCR action button (shown only after image is selected) -->
+                    <button type="button" class="process-image-btn">Process Image</button>
+
+                    <!-- Loading message shown while OCR is running -->
+                    <span class="ocr-status" aria-live="polite">Processing image, please wait...</span>
+
+                    <!-- Hidden file input with camera support -->
+                    <input
+                        id="sudoku-image-input"
+                        class="upload-input"
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                    >
+                </label>
+            </aside>
+        </section>
+        </main>
+    </div>
+
+    <!-- Informational content section below the Sudoku interface -->
+    <section id="sudoku-rules-section" class="info-content-wrap" aria-label="Sudoku tool information">
+        <div class="info-content">
+            <!-- Section 1 -->
+            <article class="content-block">
+                <h2>Smart Sudoku Assistant</h2>
+                <p>
+                    This tool helps you complete unfinished Sudoku puzzles quickly with intelligent solving logic,
+                    while keeping the process clear and easy to follow.
+                </p>
+            </article>
+
+            <!-- Section 2 -->
+            <article class="content-block">
+                <h2>How It Works</h2>
+                <p>
+                    Start by uploading an image or entering your puzzle. The system reads the grid structure,
+                    checks each position, and then computes a valid solution in seconds.
+                </p>
+            </article>
+
+            <!-- Section 3 -->
+            <article class="content-block">
+                <h2>Why Use This Tool?</h2>
+                <ul>
+                    <li>Save time on complex puzzles</li>
+                    <li>Learn solving strategies</li>
+                    <li>Verify your answers</li>
+                    <li>Improve logical thinking</li>
+                </ul>
+            </article>
+
+            <!-- Section 4 -->
+            <article class="content-block">
+                <h2>Play Smart</h2>
+                <p>
+                    Use this assistant as a learning partner: compare your steps, understand the logic,
+                    and build stronger problem-solving skills over time.
+                </p>
+            </article>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.querySelector('a[href="#sudoku-rules-section"]')?.addEventListener('click', function (event) {
+            event.preventDefault();
+            document.querySelector('#sudoku-rules-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    </script>
+</body>
+</html>
